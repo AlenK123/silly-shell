@@ -22,10 +22,8 @@ int main(void) {
 	int c_ret = 0;
 	pid_t pid = 0;
 	int ret = 0;
-	
-	printf("silly");
+
 	while (!exit) {
-		//printf("silly > ");
 		if (get_input(&words, &argc) == -1) {
 			fprintf(stderr, "memory allocation error has forced the process \
 					to terminate");
@@ -93,7 +91,7 @@ ssize_t get_input(char *** args, int *  argc) {
  	
 	printf("silly > ");
 
-	if (read(0, input, KIBIBYTE) < 0) return -1;
+	fgets(input, KIBIBYTE, stdin);
 	input[strlen(input) - 1] = '\0';
 
 	return split(input, args, argc, " ");
