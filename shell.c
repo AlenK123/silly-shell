@@ -22,6 +22,7 @@ int main(void) {
 	int c_ret = 0;
 	pid_t pid = 0;
 	int ret = 0;
+	
 
 	while (!exit) {
 		if (get_input(&words, &argc) == -1) {
@@ -40,10 +41,17 @@ int main(void) {
 			if (pid == 0) {
 				execvp(words[0], words);	
 			}
+
 			c_ret = waitpid(pid, &status, 0); 
 
-			if (c_ret == -1) fprintf(stderr, "cannot run %s with the given arguments\n" , words[0]);
-			if (c_ret == pid) printf("%s", !status ? "" : "command have returned an error code\n");
+			if (c_ret == -1 ) {
+			       	fprintf(stderr, "cannot run %s with the given arguments\n" , words[0]);
+				exit = true;
+			}
+
+			if (c_ret == pid) {
+			       	printf("%s", !status ? "" : "command have returned an error code\n");
+			}
 
 			for (size_t i = 0; i <= argc; i++) {
 				free(words[i]);
