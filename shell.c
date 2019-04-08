@@ -15,21 +15,11 @@ int main(int argc, char ** argv, char ** envp) {
 	while (!exit) {
 		if (get_input(&words, &w_count) == -1) {
 			fprintf(stderr, "memory allocation error has forced the process to terminate");
-			exit = true;
-			ret = EXIT_FAILURE;
+			clean_up(&words, w_count);
+			return EXIT_FAILURE;
 		}
-		
-		if (strcmp(words[0], "exit") == 0) {
-			exit = true;
-		}
-
-		else if (strcmp(words[0], "cd") == 0) {
-			cd(words, w_count);
-		}
-
-		else {
-			silly_execvp(words);
-		}
+			
+		exit = (strcmp(words[0], "cd") == 0) ? cd(words, w_count) & 0  : silly_execvp(words) < 0;
 
 		clean_up(&words, w_count);
 	}

@@ -33,12 +33,16 @@ ssize_t split(const char * arg, char *** args, int * argc, char * delim) {
 ssize_t get_input(char *** args, int *  argc) {
 	char input[KIBIBYTE] = { 0 };
 	char cwd[KIBIBYTE] = "";
+	char localhost[_SC_HOST_NAME_MAX];
 
-	getcwd(cwd, KIBIBYTE);
-	printf("silly <%s> ", cwd);
+	silly_getcwd(cwd, KIBIBYTE);
+	gethostname(localhost, _SC_HOST_NAME_MAX);
+	printf("silly [%s@%s] <%s> $ ", getlogin(), localhost, cwd);
 
 	fgets(input, KIBIBYTE, stdin);
 	input[strlen(input) - 1] = '\0';
+
+	silly_parse(input, KIBIBYTE);
 
 	return split(input, args, argc, " ");
 }

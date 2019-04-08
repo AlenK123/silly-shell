@@ -14,3 +14,7 @@ void clean_up(char *** words, int w_count);
 ssize_t cd(char ** words, int w_count);
 
 ssize_t silly_execvp(char ** words, ...);
+
+ssize_t silly_getcwd(char * _dst, size_t size);
+
+ssize_t silly_parse(char * cmd, ssize_t size);
