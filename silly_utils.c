@@ -56,31 +56,50 @@ ssize_t silly_execvp(char ** words, ...) {
     return c_ret;
 }
 
-ssize_t silly_getcwd(char * _dst, size_t size) {
+ssize_t silly_getcwd(char * _dst) {
     /* replacing the $HOME with '~' token for clean output */
     char * new_cwd = NULL;
+    getcwd(_dst, KIBIBYTE);
 
-    getcwd(_dst, size);
-    new_cwd = (char*)calloc(size, sizeof(char));
-    new_cwd[0] = '~';
-    strcpy(new_cwd + 1, _dst + strlen(HOME));
-    strcpy(_dst, new_cwd);
-    free(new_cwd);
+    if (strstr(_dst, HOME)) {
+        new_cwd = (char*)calloc(strlen(_dst) + 1, sizeof(char));
+        new_cwd[0] = '~';
+        strcpy(new_cwd + 1, _dst + strlen(HOME));
+        strcpy(_dst, new_cwd);
+        free(new_cwd);
+    }
     return 0;
 }
 
-ssize_t silly_parse(char * cmd, ssize_t size) {
+ssize_t silly_parse(char ** cmd, ssize_t size) {
     /* first we need to convert the '~' token to $HOME */
     char * loc = NULL;
 
-    if ((loc = strstr(cmd, "~")) != NULL) {
-        char * new_cmd = (char*)calloc(size, sizeof(char));
-        char * _start = strndup(cmd, (size_t)(loc - cmd));
-        sprintf(new_cmd, "%s%s%s", _start, HOME, loc + 1);
-        strcpy(cmd, new_cmd);
-        free(_start);
-        free(new_cmd);
-    }
+    if ((loc = strstr(*cmd, "~")) != NULL) {
+        char * new_cmd = (char*)calloc(size + strlen(HOME) - 1, sizeof(char));
+        char * _start = strndup(*cmd, (size_t)(loc - (*cmd)) );
 
+        sprintf(new_cmd, "%s%s%s", _start, HOME, loc + 1);
+        
+        free(*cmd);
+        
+        free(_start);
+        *cmd = new_cmd;
+    }
     return 0;
+}
+
+char * silly_get_msg(void) {
+    char format[] = "silly [%s@%s] (%s) $ ";
+    char hostname[_SC_HOST_NAME_MAX] = "";
+    char cwd[KIBIBYTE] = "";
+
+    char * login = getlogin();
+    gethostname(hostname, _SC_HOST_NAME_MAX);
+    silly_getcwd(cwd);
+
+    char * msg = (char*)malloc(strlen(hostname) + strlen(cwd) + strlen(format) + strlen(login) + 2);
+    sprintf(msg, format, login, hostname, cwd);
+    return msg;
+    
 }

@@ -5,9 +5,10 @@
 #include <sys/types.h>
 
 #include "silly_utils.h"
+#include "linenoise.h"
 
 #define KIBIBYTE (size_t)1024
 
 ssize_t split(const char * arg, char *** args, int * argc, char * delim);
 
-ssize_t get_input(char *** args, int *  argc);
+ssize_t get_input(char *** args, int *  argc, char ** _input);

@@ -3,7 +3,7 @@
 
 CC = gcc
 CFLAGS = -Wall
-_OBJ = silly_input.o silly_utils.o
+_OBJ = silly_input.o silly_utils.o linenoise.o
 DEPS = silly_input.c silly_utils.c
 
 shell: $(_OBJ) 

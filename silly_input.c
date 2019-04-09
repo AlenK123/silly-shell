@@ -27,22 +27,21 @@ ssize_t split(const char * arg, char *** args, int * argc, char * delim) {
 	*args = words;
 	free(s);
 
-	return 0;
+	return *argc;
 }
 
-ssize_t get_input(char *** args, int *  argc) {
-	char input[KIBIBYTE] = { 0 };
-	char cwd[KIBIBYTE] = "";
-	char localhost[_SC_HOST_NAME_MAX];
+/* TODO: change the function to get the string to output or make it a constant */
 
-	silly_getcwd(cwd, KIBIBYTE);
-	gethostname(localhost, _SC_HOST_NAME_MAX);
-	printf("silly [%s@%s] <%s> $ ", getlogin(), localhost, cwd);
+ssize_t get_input(char *** args, int *  argc, char **_input) {
+	char * msg = silly_get_msg();
 
-	fgets(input, KIBIBYTE, stdin);
-	input[strlen(input) - 1] = '\0';
+	if ((*_input = linenoise(msg)) == NULL) {
+		return 0;
+	}
 
-	silly_parse(input, KIBIBYTE);
+	free(msg);
 
-	return split(input, args, argc, " ");
+	silly_parse(_input, strlen(*_input));
+	
+	return split(*_input, args, argc, " ");
 }
